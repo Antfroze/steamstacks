@@ -1,6 +1,8 @@
 [package]
 name = "steamstacks-bindings"
 version = "0.1.0"
+description = "Raw rust bindings for steamworks"
+license = "MIT"
 edition = "2021"
 build = "build.rs"
 
