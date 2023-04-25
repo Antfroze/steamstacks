@@ -1,0 +1,8 @@
+[workspace]
+members = ["crates/bindings", "crates/core", "crates/testing"]
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"

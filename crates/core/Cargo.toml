@@ -1,0 +1,13 @@
+[package]
+name = "steamstacks"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/Antfroze/steamstacks"
+description = "Minimal steamworks bindings for Rust"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+steamstacks-bindings = {path = "../bindings", version = "0.1.0"}
+bitflags = "2.2.1"
