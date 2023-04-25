@@ -1,1 +1,4 @@
 /target
+
+crates/bindings/lib/steam/*
+!crates/bindings/lib/steam/redistributable_bin/
