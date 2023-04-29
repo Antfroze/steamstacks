@@ -1,11 +1,23 @@
-use bitflags::bitflags;
 use core::fmt;
+use std::collections::HashMap;
+use std::ffi::c_void;
+use std::sync::Mutex;
+use steamstacks_bindings as bindings;
+use utils::error::SteamError;
+
+pub use crate::apps::*;
+pub use crate::friends::*;
+pub use crate::user::*;
+pub use crate::utils::*;
 
 pub mod apps;
 pub mod friends;
 pub mod steam_api;
 pub mod user;
 pub mod utils;
+
+#[macro_use]
+extern crate thiserror;
 
 /// An id for a steam app/game
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -28,24 +40,35 @@ impl fmt::Display for SteamId {
     }
 }
 
-bitflags! {
-    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-    #[repr(C)]
-    pub struct FriendFlags: u16 {
-        const NONE                  = 0x0000;
-        const BLOCKED               = 0x0001;
-        const FRIENDSHIP_REQUESTED  = 0x0002;
-        const IMMEDIATE             = 0x0004;
-        const CLAN_MEMBER           = 0x0008;
-        const ON_GAME_SERVER        = 0x0010;
-        // Unused
-        // Unused
-        const REQUESTING_FRIENDSHIP = 0x0080;
-        const REQUESTING_INFO       = 0x0100;
-        const IGNORED               = 0x0200;
-        const IGNORED_FRIEND        = 0x0400;
-        // Unused
-        const CHAT_MEMBER           = 0x1000;
-        const ALL                   = 0xFFFF;
+pub(crate) unsafe trait Manager {
+    fn get_pipe() -> bindings::HSteamPipe;
+}
+
+pub struct ClientManager {}
+
+unsafe impl Manager for ClientManager {
+    fn get_pipe() -> bindings::HSteamPipe {
+        unsafe { bindings::SteamAPI_GetHSteamPipe() }
     }
 }
+
+impl Drop for ClientManager {
+    fn drop(&mut self) {
+        unsafe {
+            bindings::SteamAPI_Shutdown();
+        }
+    }
+}
+
+struct SteamCtx<Manager> {
+    _manager: Manager,
+    callbacks: Mutex<Callbacks>,
+}
+
+struct Callbacks {
+    callbacks: HashMap<i32, Box<dyn FnMut(*mut c_void) + Send + 'static>>,
+    call_results:
+        HashMap<bindings::SteamAPICall_t, Box<dyn FnOnce(*mut c_void, bool) + Send + 'static>>,
+}
+
+pub type SResult<T> = Result<T, SteamError>;

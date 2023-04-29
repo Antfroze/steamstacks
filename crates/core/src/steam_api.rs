@@ -1,6 +1,6 @@
-use steamstacks_bindings as bindings;
+use crate::bindings;
 
-use crate::{apps::Apps, friends::Friends, user::User, utils::Utils};
+use crate::{apps::Apps, friends::Friends, user::User, Utils};
 
 pub fn init() -> Result<(), &'static str> {
     if !unsafe { bindings::SteamAPI_Init() } {
@@ -8,12 +8,6 @@ pub fn init() -> Result<(), &'static str> {
     }
 
     Ok(())
-}
-
-pub fn shutdown() {
-    unsafe {
-        bindings::SteamAPI_Shutdown();
-    }
 }
 
 pub fn friends() -> Friends {

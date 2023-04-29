@@ -1,5 +1,8 @@
 use steamstacks_bindings as bindings;
 
+pub mod callbacks;
+pub mod error;
+
 pub struct Utils {
     pub(crate) utils: *mut bindings::ISteamUtils,
 }

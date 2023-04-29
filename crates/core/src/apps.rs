@@ -1,5 +1,5 @@
 use super::*;
-use steamstacks_bindings as bindings;
+use crate::bindings;
 
 pub struct Apps {
     pub(crate) apps: *mut bindings::ISteamApps,

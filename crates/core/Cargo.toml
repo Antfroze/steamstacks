@@ -11,3 +11,4 @@ license = "MIT"
 [dependencies]
 steamstacks-bindings = {path = "../bindings", version = "0.1.0"}
 bitflags = "2.2.1"
+thiserror = "1.0.40"

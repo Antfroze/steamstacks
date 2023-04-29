@@ -1,6 +1,30 @@
 use super::*;
+use crate::bindings;
 use core::ffi::CStr;
-use steamstacks_bindings as bindings;
+
+use bitflags::bitflags;
+
+bitflags! {
+    #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+    #[repr(C)]
+    pub struct FriendFlags: u16 {
+        const NONE                  = 0x0000;
+        const BLOCKED               = 0x0001;
+        const FRIENDSHIP_REQUESTED  = 0x0002;
+        const IMMEDIATE             = 0x0004;
+        const CLAN_MEMBER           = 0x0008;
+        const ON_GAME_SERVER        = 0x0010;
+        // Unused
+        // Unused
+        const REQUESTING_FRIENDSHIP = 0x0080;
+        const REQUESTING_INFO       = 0x0100;
+        const IGNORED               = 0x0200;
+        const IGNORED_FRIEND        = 0x0400;
+        // Unused
+        const CHAT_MEMBER           = 0x1000;
+        const ALL                   = 0xFFFF;
+    }
+}
 
 pub enum ImageSize {
     LARGE = 184,
