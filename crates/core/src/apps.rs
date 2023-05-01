@@ -1,9 +1,13 @@
 use super::*;
 use crate::bindings;
 
+#[derive(Clone)]
 pub struct Apps {
     pub(crate) apps: *mut bindings::ISteamApps,
 }
+
+unsafe impl Send for Apps {}
+unsafe impl Sync for Apps {}
 
 impl Apps {
     pub(crate) fn new() -> Self {

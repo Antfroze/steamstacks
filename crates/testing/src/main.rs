@@ -8,6 +8,9 @@ fn main() {
     let apps = steam_api::apps();
     let utils = steam_api::utils();
 
+    // user.request_encrypted_app_ticket();
+    user.get_encrypted_app_ticket();
+
     println!("{}", utils.get_app_id());
 
     println!("Hello, {}", friends.get_persona_name());
@@ -16,6 +19,10 @@ fn main() {
 
     println!("Owns Subnautica: {}", apps.is_subscribed_app(848450.into()));
     println!("Owns Rust: {}", apps.is_subscribed_app(252490.into()));
+
+    loop {
+        steam_api::run_callbacks();
+    }
 
     // println!(
     //     "TESTING: {:?}",

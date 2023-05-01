@@ -12,3 +12,4 @@ license = "MIT"
 steamstacks-bindings = {path = "../bindings", version = "0.1.0"}
 bitflags = "2.2.1"
 thiserror = "1.0.40"
+lazy_static = "1.4.0"

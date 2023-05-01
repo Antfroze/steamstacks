@@ -206,6 +206,7 @@ name = "steamstacks"
 version = "0.1.0"
 dependencies = [
  "bitflags 2.2.1",
+ "lazy_static",
  "steamstacks-bindings",
  "thiserror",
 ]

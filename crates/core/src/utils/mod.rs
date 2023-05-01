@@ -3,9 +3,13 @@ use steamstacks_bindings as bindings;
 pub mod callbacks;
 pub mod error;
 
+#[derive(Clone)]
 pub struct Utils {
     pub(crate) utils: *mut bindings::ISteamUtils,
 }
+
+unsafe impl Send for Utils {}
+unsafe impl Sync for Utils {}
 
 impl Utils {
     pub(crate) fn new() -> Self {

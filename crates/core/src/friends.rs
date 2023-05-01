@@ -1,8 +1,5 @@
 use super::*;
-use crate::bindings;
 use core::ffi::CStr;
-
-use bitflags::bitflags;
 
 bitflags! {
     #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -32,9 +29,13 @@ pub enum ImageSize {
     SMALL = 32,
 }
 
+#[derive(Clone)]
 pub struct Friends {
     pub(crate) friends: *mut bindings::ISteamFriends,
 }
+
+unsafe impl Send for Friends {}
+unsafe impl Sync for Friends {}
 
 impl Friends {
     pub(crate) fn new() -> Self {
