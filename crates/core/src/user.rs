@@ -1,5 +1,3 @@
-use std::error::Error;
-
 use crate::steam_api::register_call_result;
 
 use super::*;

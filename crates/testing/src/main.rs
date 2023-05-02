@@ -1,4 +1,4 @@
-use steamstacks::{friends::ImageSize, steam_api, FriendFlags};
+use steamstacks::steam_api;
 
 fn main() {
     steam_api::init().unwrap();
@@ -9,7 +9,7 @@ fn main() {
     let utils = steam_api::utils();
 
     // user.request_encrypted_app_ticket();
-    user.get_encrypted_app_ticket();
+    user.get_encrypted_app_ticket().unwrap();
 
     println!("{}", utils.get_app_id());
 
@@ -20,9 +20,11 @@ fn main() {
     println!("Owns Subnautica: {}", apps.is_subscribed_app(848450.into()));
     println!("Owns Rust: {}", apps.is_subscribed_app(252490.into()));
 
-    loop {
+    while true {
         steam_api::run_callbacks();
     }
+
+    steam_api::shutdown();
 
     // println!(
     //     "TESTING: {:?}",
@@ -37,6 +39,4 @@ fn main() {
     //         friend.get_steam_id()
     //     );
     // }
-
-    steam_api::shutdown();
 }
