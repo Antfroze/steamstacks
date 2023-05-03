@@ -1,6 +1,5 @@
 use core::fmt;
 use steamstacks_bindings as bindings;
-use utils::error::SteamError;
 
 pub use crate::apps::*;
 pub use crate::friends::*;
@@ -43,4 +42,4 @@ impl fmt::Display for SteamId {
     }
 }
 
-pub type SResult<T> = Result<T, SteamError>;
+pub type SResult<T> = Result<T, SteamResult>;

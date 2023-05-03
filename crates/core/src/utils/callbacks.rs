@@ -1,3 +1,4 @@
+use super::super::*;
 use std::ffi::c_void;
 
 pub unsafe trait Callback {
@@ -6,4 +7,7 @@ pub unsafe trait Callback {
     unsafe fn from_raw(raw: *mut c_void) -> Self;
 }
 
-
+#[derive(Debug, Clone)]
+pub struct EncryptedAppTicketResponse {
+    pub result: bindings::EResult,
+}

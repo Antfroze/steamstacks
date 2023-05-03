@@ -21,7 +21,7 @@ lazy_static! {
 pub fn init() -> SResult<()> {
     unsafe {
         if !bindings::SteamAPI_Init() {
-            return Err(SteamError::InitFailed);
+            return Err(SteamResult::InitFailed);
         }
         bindings::SteamAPI_ManualDispatch_Init();
 
@@ -121,35 +121,36 @@ pub(crate) fn run_client_callbacks() {
     }
 }
 
-pub(crate) unsafe fn register_callback<C, F>(mut f: F)
+pub fn register_callback<C, F>(mut f: F)
 where
     C: Callback,
     F: FnMut(C) + Send + 'static,
 {
-    let mut callbacks_ref = CLIENT_CALLBACKS.lock().unwrap();
+    unsafe {
+        let mut callbacks_ref = CLIENT_CALLBACKS.lock().unwrap();
 
-    let callbacks = callbacks_ref.as_mut().unwrap();
-    callbacks.callbacks.insert(
-        C::ID,
-        Box::new(move |param| {
-            let param = C::from_raw(param);
-            f(param)
-        }),
-    );
+        let callbacks = callbacks_ref.as_mut().unwrap();
+        callbacks.callbacks.insert(
+            C::ID,
+            Box::new(move |param| {
+                let param = C::from_raw(param);
+                f(param)
+            }),
+        );
+    }
 }
 
-pub(crate) unsafe fn register_call_result<C, F>(
-    api_call: bindings::SteamAPICall_t,
-    _callback_id: i32,
-    f: F,
-) where
+pub fn register_call_result<C, F>(api_call: bindings::SteamAPICall_t, f: F)
+where
     F: for<'a> FnOnce(&'a C, bool) + 'static + Send,
 {
-    let mut callbacks_ref = CLIENT_CALLBACKS.lock().unwrap();
+    unsafe {
+        let mut callbacks_ref = CLIENT_CALLBACKS.lock().unwrap();
 
-    let callbacks = callbacks_ref.as_mut().unwrap();
-    callbacks.call_results.insert(
-        api_call,
-        Box::new(move |param, failed| f(&*(param as *const C), failed)),
-    );
+        let callbacks = callbacks_ref.as_mut().unwrap();
+        callbacks.call_results.insert(
+            api_call,
+            Box::new(move |param, failed| f(&*(param as *const C), failed)),
+        );
+    }
 }

@@ -1,7 +1,10 @@
 use steamstacks_bindings as bindings;
 
 pub mod callbacks;
-pub mod error;
+pub mod result;
+
+pub use callbacks::*;
+pub use result::*;
 
 #[derive(Clone)]
 pub struct Utils {

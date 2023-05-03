@@ -1,5 +1,3 @@
-use crate::steam_api::register_call_result;
-
 use super::*;
 
 #[derive(Clone)]
@@ -12,17 +10,19 @@ unsafe impl Sync for User {}
 
 impl User {
     pub(crate) fn new() -> Self {
-        Self {
-            user: unsafe { bindings::SteamAPI_SteamUser_v022() },
+        unsafe {
+            Self {
+                user: bindings::SteamAPI_SteamUser_v022(),
+            }
         }
     }
 
     /// Get the steam id of the current logged in user
     pub fn get_steam_id(&self) -> SteamId {
-        SteamId(unsafe { bindings::SteamAPI_ISteamUser_GetSteamID(self.user) })
+        unsafe { SteamId(bindings::SteamAPI_ISteamUser_GetSteamID(self.user)) }
     }
 
-    pub fn request_encrypted_app_ticket(&self) -> SResult<()> {
+    pub fn request_encrypted_app_ticket(&self) -> u64 {
         unsafe {
             let api_call = bindings::SteamAPI_ISteamUser_RequestEncryptedAppTicket(
                 self.user,
@@ -30,19 +30,14 @@ impl User {
                 0,
             );
 
-            register_call_result::<bindings::EncryptedAppTicketResponse_t, _>(
-                api_call,
-                bindings::EncryptedAppTicketResponse_t_k_iCallback as i32,
-                move |v, io_error| {
-                    println!("Got call result: {:?} {:?}", v, io_error);
-                },
-            );
+            api_call
         }
-
-        Ok(())
     }
 
-    pub fn get_encrypted_app_ticket(&self) -> Result<(), &str> {
+    /// Retrieve a encrypted app ticket
+    /// If called without calling `request_encryped_app_ticket()`, will likely result in
+    /// stale ticket.
+    pub fn get_encrypted_app_ticket(&self) -> Result<Vec<i32>, &str> {
         unsafe {
             let mut ticket_buffer = vec![0; 1024];
             let mut ticket_len = 0;
@@ -58,8 +53,7 @@ impl User {
 
             ticket_buffer.truncate(ticket_len as usize);
 
-            println!("Ticket buffer: {:?}", ticket_buffer);
-            Ok(())
+            Ok(ticket_buffer)
         }
     }
 }

@@ -1,4 +1,4 @@
-use steamstacks::steam_api;
+use steamstacks::{callbacks::EncryptedAppTicketResponse, result::SteamResult, steam_api};
 
 fn main() {
     steam_api::init().unwrap();
@@ -6,21 +6,32 @@ fn main() {
     let user = steam_api::user();
     let friends = steam_api::friends();
     let apps = steam_api::apps();
-    let utils = steam_api::utils();
+    // let utils = steam_api::utils();
 
-    // user.request_encrypted_app_ticket();
-    user.get_encrypted_app_ticket().unwrap();
+    let api_call = user.request_encrypted_app_ticket();
 
-    println!("{}", utils.get_app_id());
+    steam_api::register_call_result::<EncryptedAppTicketResponse, _>(api_call, move |r, _| {
+        let result: SteamResult = r.result.into();
+        match result {
+            SteamResult::Ok => {
+                let ticket = user.get_encrypted_app_ticket().unwrap();
+                println!("Ticket: {:?}", ticket);
+            }
+            _ => println!("Error: {:?}", result),
+        }
+    });
+
+    // println!("{}", utils.get_app_id());
 
     println!("Hello, {}", friends.get_persona_name());
-    println!("Steam ID: {}", user.get_steam_id());
+    // println!("Steam ID: {}", user.get_steam_id());
+
     println!("Owns app: {}", apps.is_subscribed());
 
     println!("Owns Subnautica: {}", apps.is_subscribed_app(848450.into()));
     println!("Owns Rust: {}", apps.is_subscribed_app(252490.into()));
 
-    while true {
+    loop {
         steam_api::run_callbacks();
     }
 
